@@ -19,6 +19,7 @@ router.post('/user/:userId',auth.userAuth,userController.resetPassword)
 router.post('/createEvents',eventController.createEvents)
 router.get('/geteventDetails',auth.userAuth,eventController.getEventDetails)
 router.put('/updateEventDetails',auth.userAuth,eventController.updateEventDetails)
+router.get('/getDetailsofevent',eventController.getEventDetailsByQuery)
 
 
 

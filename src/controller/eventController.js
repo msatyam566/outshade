@@ -1,6 +1,7 @@
 const eventModel = require('../models/eventModel')
 const bcrypt = require('bcrypt')
-const validator = require('../validations/validator')
+const validator = require('../validations/validator');
+const { events } = require('../models/userModel');
 
 
 //======================creating events=============================//
@@ -142,6 +143,27 @@ const updateEventDetails= async (req,res)=>{
 const getEventDetailsByQuery =async(req,res)=>{
     try {
         const queryforDetails = req.query;
+        let filter = {isDeleted:false}
+
+const {title,eventDate}=queryforDetails
+
+if (title) {
+    if (!validator.isValidValue(title)) {
+        return res.status(400).send({ status: false, message: "Please enter  title " })
+    }
+}
+if (eventDate) {
+    if (!validator.isValidValue(eventDate)) {
+        return res.status(400).send({ status: false, message: "Please enter t eventDate " })
+    }
+}
+const eventDetails = await eventModel.find(filter)
+
+            if (events.length === 0) {
+                return res.status(404).send({ productStatus: false, message: 'No events found' })
+            }
+
+            return res.status(200).send({ status: true, message: 'eventList', data: eventDetails })
         
         
     } catch (error) {
@@ -154,4 +176,4 @@ const getEventDetailsByQuery =async(req,res)=>{
 
 
 
-module.exports={createEvents,getEventDetails,updateEventDetails}
+module.exports={createEvents,getEventDetails,updateEventDetails,getEventDetailsByQuery}
