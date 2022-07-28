@@ -12,12 +12,13 @@ router.post('/register', userController.createUser)
 router.post('/login', userController.userLogin)
 router.get("/logout",auth.userAuth,userController.logout);
 router.put('/user/:userId', auth.userAuth, userController.updatePassword)
-
+router.post('/user/:userId',auth.userAuth,userController.resetPassword)
 
 //===============eventController====================//
 
 router.post('/createEvents',eventController.createEvents)
-
+router.get('/geteventDetails',auth.userAuth,eventController.getEventDetails)
+router.put('/updateEventDetails',auth.userAuth,eventController.updateEventDetails)
 
 
 

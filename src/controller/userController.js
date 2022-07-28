@@ -54,8 +54,7 @@ const createUser = async(req,res)=>{
     }
 }
 
-
-//************  user login  ******************************** */
+//==============================user login===============================//
 
 const userLogin = async (req, res) => {
     try {
@@ -105,15 +104,22 @@ const userLogin = async (req, res) => {
     }
 }
 
+//==============================logout user===============================//
+
+
 const logout = (req, res) => {
     return res.clearCookie("access_token").status(200).send({ message: "Successfully logged out" });
 };
 
 
+//================================update password============================//
+
+
 const updatePassword = async (req, res) => {
-    let data = req.body
-    const id = req.params.userId
     try {
+        let data = req.body
+        const id = req.params.userId
+        const userIdFromToken = req.userId
 
         if (!validator.isValidDetails(data)) {
             return res.status(400).send({ status: false, message: "please provide details to update." });
@@ -130,7 +136,7 @@ const updatePassword = async (req, res) => {
             });
         }
 
-        const findUser = await userModel.findOne({_id:id})
+        const findUser = await userModel.findById({_id:id})
         if (!findUser) return res.status(404).send({ status: false, message: "User not found" })
 
 
@@ -157,15 +163,46 @@ const updatePassword = async (req, res) => {
     }
 };
 
+//============================reset password==============================//
+
+const resetPassword = async(req,res)=>{
+    try {
+        const data = req.body.email
+        const id = req.params.userId
+        const userIdFromToken = req.userId
+
+        if (!validator.isValidDetails(data)) {
+            return res.status(400).send({ status: false, message: "please provide details to update." });
+                    }
+        if (!validator.isValidObjectId(id)) {
+            return res.status(400).send({ status: false, message: "not a valid user id "})
+            
+        }
+        if (!/^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/.test(email)) {
+            return res.status(400).send({ status: false, message: "Please provide valid Email Address" });
+        }
+        const userEmail = await userModel.findOne({ data: email })
+        
+        if (!userEmail) 
+          return resstatus(401).send({ status: false, msg: 'Not a correct Email check your email id ' })
+
+          //Authorisation check
+          if (userIdFromToken != id) {
+            return res.status(403).send({
+              status: false,
+              message: "Unauthorized access.",
+            });
+        }
+        
+    } catch (error) {
+        return res.status(500).send({status:false,messege:error.message})
+        
+    }
+}
 
 
 
 
 
 
-
-
-
-
-
-module.exports={createUser,userLogin,logout,updatePassword}
+module.exports={createUser,userLogin,logout,updatePassword,resetPassword}

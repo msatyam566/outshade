@@ -10,6 +10,7 @@ invitations:  [{
   invitee: { type: ObjectId, refs: 'User', required: true },
         timings: { type: String, required: true,},
        },],
+       resetPasswordToken : {type:String}
 
 
 }, { timestamps: true })
